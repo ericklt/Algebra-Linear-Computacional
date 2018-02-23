@@ -1,18 +1,16 @@
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+package model;
 
 public class StopWatch {
 
-	private static final Calendar calendar = new GregorianCalendar();
 	private long currentTime = 0;
 	private long startTime = 0;
 	
 	public void start() {
-		startTime = calendar.getTimeInMillis();
+		startTime = System.currentTimeMillis();
 	}
 	
 	public long stop() {
-		currentTime += calendar.getTimeInMillis() - startTime;
+		currentTime += System.currentTimeMillis() - startTime;
 		return currentTime;
 	}
 	

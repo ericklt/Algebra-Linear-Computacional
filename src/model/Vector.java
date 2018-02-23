@@ -1,6 +1,8 @@
+package model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -31,14 +33,19 @@ public class Vector extends ArrayList<Double> {
 		return this.stream().reduce(0., (x, y) -> x + y);
 	}
 	
-	public Vector elementwiseDot(Vector v) {
-		List<Double> newVec = IntStream.range(0, this.size())
-				.mapToDouble(i -> this.get(i) * v.get(i))
+	private Vector zippedOperation(Vector v, BinaryOperator<Double> binaryOperator) {
+		List<Double> newVec = IntStream.range(0, Math.max(this.size(), v.size()))
+				.mapToDouble(i -> binaryOperator.apply(this.get(i), v.get(i)))
 				.boxed()
 				.collect(Collectors.toList());
 		
 		return new Vector(newVec);
 	}
+	
+	public Vector elementwiseDot(Vector v) {
+		return zippedOperation(v, (x1, x2) -> x1 * x2);
+	}
+	
 	
 	public Vector dot(double d) {
 		return new Vector(this.stream().map(x -> x*d).collect(Collectors.toList()));
@@ -46,6 +53,10 @@ public class Vector extends ArrayList<Double> {
 	
 	public double dot(Vector v) {
 		return this.elementwiseDot(v).sumAll();
+	}
+	
+	public Vector sum(Vector v) {
+		return zippedOperation(v, (x1, x2) -> x1 + x2);
 	}
 	
 	public String toFixedSizeString(int n) {
@@ -59,6 +70,12 @@ public class Vector extends ArrayList<Double> {
 	@Override
 	public String toString() {
 		return toFixedSizeString(this.size());
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		Vector other = (Vector)(o);
+		return IntStream.range(0, Math.max(this.size(), other.size())).allMatch(i -> this.get(i).equals(other.get(i)));
 	}
 
 }

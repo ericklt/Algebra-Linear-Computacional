@@ -1,3 +1,4 @@
+package model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,7 +9,7 @@ public class Matrix extends ArrayList<Vector> {
 	
 	private static final long serialVersionUID = 1L;
 
-	private int[] shape = new int[] {0, 0};
+	protected int[] shape = new int[] {0, 0};
 	
 	public Matrix(List<Vector> matrix) {
 		matrix.forEach(this::addRow);
@@ -23,7 +24,7 @@ public class Matrix extends ArrayList<Vector> {
 	}
 	
 	public Double get(int i, int j) {
-		return this.get(i).get(j);
+		return this.getRow(i).get(j);
 	}
 	
 	public Double set(int i, int j, Double value) {
@@ -32,7 +33,14 @@ public class Matrix extends ArrayList<Vector> {
 		return this.get(i).set(j, value);
 	}
 	
+	public Vector set(int i, Vector v) {
+		while(shape[0] <= i) addRow(new Vector());
+		if (v.size() > shape[1]) shape[1] = v.size();
+		return super.set(i, v);
+	}
+	
 	public Vector getRow(int i) {
+		if (i >= shape[0]) return new Vector();
 		return this.get(i);
 	}
 	
@@ -70,23 +78,17 @@ public class Matrix extends ArrayList<Vector> {
 		return new Vector(this.stream().mapToDouble(row -> row.dot(v)).boxed().collect(Collectors.toList()));
 	}
 	
+	public Vector dotByLinearCombination(Vector v) {
+		Matrix mT = this.T();
+		return IntStream.range(0, v.size())
+				.mapToObj(i -> mT.getRow(i).dot(v.get(i)))
+				.reduce((v1, v2) -> v1.sum(v2))
+				.get();
+	}
+	
 	public Matrix dot(Matrix m) {
 		Matrix mT = m.T();
 		return new Matrix(this.stream().map(row -> mT.dot(row)).collect(Collectors.toList()));
-	}
-	
-	public Matrix dot_oldscholl(Matrix m) {
-		Matrix result = new Matrix();
-		for (int i = 0; i < shape[0]; i++) {
-			for (int j = 0; j < m.shape()[1]; j++) {
-				double sum = 0;
-				for (int k = 0; k < shape[1]; k++) {
-					sum += this.get(i, k) * m.get(k, j);
-				}
-				result.set(i, j, sum);
-			}
-		}
-		return result;
 	}
 	
 	@Override
@@ -94,6 +96,12 @@ public class Matrix extends ArrayList<Vector> {
 		StringBuilder builder = new StringBuilder();
 		this.forEach(row -> builder.append(row.toFixedSizeString(shape[1]) + "\n"));
 		return builder.toString();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		Matrix other = (Matrix)(o);
+		return IntStream.range(0, Math.max(this.size(), other.size())).allMatch(i -> this.getRow(i).equals(other.getRow(i)));
 	}
 
 }
