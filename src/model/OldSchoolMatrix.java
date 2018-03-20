@@ -1,6 +1,6 @@
 package model;
 
-public class OldschoolMatrix extends Matrix {
+public class OldSchoolMatrix extends Matrix {
 
 	private static final long serialVersionUID = 1L;
 	

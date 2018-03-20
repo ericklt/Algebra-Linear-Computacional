@@ -2,12 +2,12 @@ package test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 
 import model.Generator;
 import model.Matrix;
-import model.OldschoolMatrix;
+import model.OldSchoolMatrix;
 import model.StopWatch;
 import model.Vector;
 
@@ -16,11 +16,10 @@ class Test {
 	private static Matrix m1, m1Clone, m2, mGen;
 	private static Matrix oldM;
 	private static Vector v1, v1Clone, v2, vGen;
-	private static Generator generator;
 	private static StopWatch w1, w2;
 
 	@BeforeAll
-	static void setUpBeforeClass() throws Exception {
+	static void setUpBeforeClass() {
 		w1 = new StopWatch();
 		w2 = new StopWatch();
 
@@ -35,22 +34,22 @@ class Test {
 		m1Clone = new Matrix();
 		m1Clone.addRow(1., 2., 3.);
 		m1Clone.addRow(4., 5., 6.);
-		
+
 		m2 = new Matrix();
 		m2.addColumn(7., 8., 9.);
 		m2.addColumn(10., 11., 12.);
-		
-		generator = new Generator(1);
+
+		Generator generator = new Generator(1);
 		
 		mGen = generator.generateRandomMatrix(3, 100000, 10);
 		vGen = generator.generateRandomVector(100000, 5);
 		
-		oldM = new OldschoolMatrix();
+		oldM = new OldSchoolMatrix();
 		generator.randomize(oldM, 3, 100000, 10);
 	}
 	
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		w1.reset();
 		w2.reset();
 	}
@@ -83,18 +82,18 @@ class Test {
 	}
 	
 	@org.junit.jupiter.api.Test
-	void testOldschoolTimes() {
+	void testOldSchoolTimes() {
 		w1.start();
 		Vector result = oldM.dot(vGen);
 		w1.stop();
-		System.out.println("Oldscholl result: " + result);
+		System.out.println("OldSchool result: " + result);
 		
 		w2.start();
 		oldM.dotByLinearCombination(vGen);
 		w2.stop();
 		
-		System.out.println("(OldScholl) Time simple dot: " + w1.getTime());
-		System.out.println("(OldScholl) Time linear combination dot: " + w2.getTime());
+		System.out.println("(OldSchool) Time simple dot: " + w1.getTime());
+		System.out.println("(OldSchool) Time linear combination dot: " + w2.getTime());
 	}
 
 }
