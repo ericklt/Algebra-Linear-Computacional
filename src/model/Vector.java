@@ -1,4 +1,5 @@
 package model;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +23,10 @@ public class Vector extends ArrayList<Double> {
 	
 	public Vector(Double ...values) {
 		this(Arrays.asList( values ));
+	}
+
+	public Vector copy() {
+		return this.stream().collect(Collectors.toCollection(Vector::new));
 	}
 	
 	public Double get(int index) {
@@ -76,7 +81,7 @@ public class Vector extends ArrayList<Double> {
 	public String toFixedSizeString(int n) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[\t");
-		IntStream.range(0, n).forEach(i -> builder.append(this.get(i)).append("\t"));
+		IntStream.range(0, n).forEach(i -> builder.append(new DecimalFormat("0.00").format(this.get(i))).append("\t"));
 		builder.append("]");
 		return builder.toString();
 	}
@@ -98,7 +103,7 @@ public class Vector extends ArrayList<Double> {
 	public boolean equals(Object o) {
 		if (!(o instanceof Vector)) return false;
 		Vector other = (Vector)(o);
-		return IntStream.range(0, Math.max(this.size(), other.size())).allMatch(i -> this.get(i).equals(other.get(i)));
+		return IntStream.range(0, Math.max(this.size(), other.size())).allMatch(i -> Math.abs(this.get(i) - other.get(i)) < 0.0001);
 	}
 
 	public static Vector base(int size, int onePosition) {

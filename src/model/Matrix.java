@@ -1,4 +1,6 @@
 package model;
+import Utils.Pair;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +20,12 @@ public class Matrix extends ArrayList<Vector> {
 	
 	public Matrix(Vector ...vectors) {
 		this(Arrays.asList(vectors));
+	}
+
+	public Matrix copy() {
+		Matrix m = new Matrix();
+		this.forEach(row -> m.addRow(row.copy()));
+		return m;
 	}
 	
 	public int[] shape() {
@@ -139,7 +147,11 @@ public class Matrix extends ArrayList<Vector> {
 		return result;
 	}
 
-	private void partialPivoting(int k, Vector b) {
+	public boolean partialPivoting(int k) {
+		return this.partialPivoting(k, new Vector());
+	}
+
+	private boolean partialPivoting(int k, Vector b) {
 		int greatestRow = -1;
 		Double greatest = this.get(k, k);
 		for (int i = k+1; i < this.shape[0]; i++) {
@@ -148,13 +160,14 @@ public class Matrix extends ArrayList<Vector> {
 				greatest = this.get(i, k);
 			}
 		}
-		if (greatestRow != -1) {
-			this.swapRows(k, greatestRow);
-			b.swap(k, greatestRow);
-		}
+		if (greatestRow == -1) return false;
+
+		this.swapRows(k, greatestRow);
+		b.swap(k, greatestRow);
+		return true;
 	}
 
-	private void totalPivoting(int k, Vector b, Matrix columnPermutation) {
+	private boolean totalPivoting(int k, Vector b, Matrix columnPermutation) {
 		int greatestRow = -1;
 		int greatestCol = -1;
 		Double greatest = this.get(k, k);
@@ -167,35 +180,130 @@ public class Matrix extends ArrayList<Vector> {
 				}
 			}
 		}
-		if (greatestRow != -1) {
-			this.swapRows(k, greatestRow);
-			b.swap(k, greatestRow);
-			this.swapColumns(k, greatestCol);
-			columnPermutation.swapRows(k, greatestCol);
-		}
+		if (greatestRow == -1) return false;
+
+		this.swapRows(k, greatestRow);
+		b.swap(k, greatestRow);
+		this.swapColumns(k, greatestCol);
+		columnPermutation.swapRows(k, greatestCol);
+		return true;
 	}
 
 	public Vector solveByGaussianElimination(Vector b, PivotingMode mode) {
-		Matrix colPermutation = Matrix.identity(this.shape[0]);
-		for (int k = 0; k < this.size()-1; k++) {
+		if (this.shape[0] != this.shape[1]) {
+			System.err.println("It is not a square matrix!");
+			return null;
+		}
+		Matrix copy = this.copy();
+		b = b.copy();
+		Matrix colPermutation = Matrix.identity(copy.shape()[0]);
+		for (int k = 0; k < copy.size()-1; k++) {
 			if (mode == PivotingMode.PARTIAL)
-				partialPivoting(k, b);
+				copy.partialPivoting(k, b);
 			else if (mode == PivotingMode.TOTAL)
-				totalPivoting(k, b, colPermutation);
+				copy.totalPivoting(k, b, colPermutation);
 
-			for (int i = k+1; i < this.size(); i++) {
-				if (this.get(k, k) == 0) {
+			for (int i = k+1; i < copy.size(); i++) {
+				if (copy.get(k, k) == 0) {
 					System.err.println("Some pivot is 0, aborting gauss!");
 					return null;
 				}
-				Double multiplier = - this.get(i, k) / this.get(k, k);
-				this.set(i, this.get(i).sum(this.get(k).dot(multiplier)));
+				Double multiplier = - copy.get(i, k) / copy.get(k, k);
+				copy.set(i, copy.get(i).sum(copy.get(k).dot(multiplier)));
 				b.set(i, b.get(i) + b.get(k)*multiplier);
 			}
 		}
-		return solveByRetroSubstitution(b, colPermutation);
+		return copy.solveByRetroSubstitution(b, colPermutation);
 	}
-	
+
+	public Double determinant() {
+		if (this.shape[0] != this.shape[1]) {
+			System.err.println("It is not a square matrix!");
+			return null;
+		}
+		Matrix copy = this.copy();
+		int finalMultiplier = 1;
+		Double result = 1.;
+		for (int k = 0; k < copy.size(); k++) {
+			boolean swapped = copy.partialPivoting(k);
+			finalMultiplier *= (swapped)? -1 : 1;
+
+			for (int i = k+1; i < copy.size(); i++) {
+				if (copy.get(k, k) == 0) {
+					return 0.;
+				}
+				Double multiplier = - copy.get(i, k) / copy.get(k, k);
+				copy.set(i, copy.get(i).sum(copy.get(k).dot(multiplier)));
+			}
+			result *= copy.get(k, k);
+		}
+		return result * finalMultiplier;
+	}
+
+	public Matrix choleskyDecomposition() {
+		if (this.shape[0] != this.shape[1]) {
+			System.err.println("It is not a square matrix!");
+			return null;
+		} else if (!this.equals(this.T())) {
+			System.err.println("It is not a symmetric matrix!");
+			return null;
+		}
+		Matrix result = new Matrix();
+		for (int i = 0; i < this.shape[0]; i++) {
+			for (int j = 0; j <= i; j++) {
+				Double term = 0.;
+				for (int k = 0; k < j; k++)
+					term += result.get(i, k) * result.get(j, k);
+				term = this.get(i, j) - term;
+
+				if (i == j) {
+					if (term <= 0) {
+						System.err.println("Matrix is not positive definite");
+						return null;
+					} else {
+						result.set(i, j, Math.sqrt(term));
+					}
+				} else {
+					result.set(i, j, term / result.get(j, j));
+				}
+			}
+		}
+		return result;
+	}
+
+	public Vector solveByCholesky(Vector b) {
+		Matrix cho = this.choleskyDecomposition();
+		return cho.T().solveByRetroSubstitution(cho.solveBySubstitution(b));
+	}
+
+	public Pair<Matrix> LUDecomposition() {
+		if (this.shape[0] != this.shape[1]) {
+			System.err.println("It is not a square matrix!");
+			return null;
+		}
+		Matrix L = Matrix.identity(this.size());
+		Matrix U = this.copy();
+
+		for (int k = 0; k < U.size()-1; k++) {
+			for (int i = k+1; i < U.size(); i++) {
+				if (U.get(k, k) == 0) {
+					System.err.println("Some pivot is 0, aborting LU!");
+					return null;
+				}
+				Double multiplier = - U.get(i, k) / U.get(k, k);
+				U.set(i, U.get(i).sum(U.get(k).dot(multiplier)));
+				L.set(i, k, -multiplier);
+			}
+		}
+		return new Pair<>(L, U);
+	}
+
+	public Vector solveByLU(Vector b) {
+		Pair<Matrix> LU = this.LUDecomposition();
+		return LU._2().solveByRetroSubstitution(LU._1().solveBySubstitution(b));
+	}
+
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

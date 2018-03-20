@@ -29,6 +29,8 @@ class LinearFunctionTest {
         assertEquals(new Vector(1., 0., 0., 4.), A.solveByGaussianElimination(b, PivotingMode.NONE), "Gaussian no pivoting");
         assertEquals(new Vector(1., 0., 0., 4.), A.solveByGaussianElimination(b, PivotingMode.PARTIAL), "Gaussian partial pivoting");
         assertEquals(new Vector(1., 0., 0., 4.), A.solveByGaussianElimination(b, PivotingMode.TOTAL), "Gaussian total pivoting");
+
+        assertEquals(5, A.determinant(), 0.0001, "Determinant of A");
     }
 
 }
