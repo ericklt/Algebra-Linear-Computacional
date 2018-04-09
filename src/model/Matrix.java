@@ -100,11 +100,39 @@ public class Matrix extends ArrayList<Vector> {
 	private IntStream reverseRange(int start, int end) {
 		return IntStream.range(start, end).map(i -> end - i + start - 1);
 	}
+
+	public Matrix subRows(int start, int end) {
+		Matrix result = new Matrix();
+		IntStream.range(start, end).forEach(i -> result.addRow(get(i)));
+		return result;
+	}
+
+	public Matrix subCols(int start, int end) {
+		return this.T().subRows(start, end).T();
+	}
 	
 	public Matrix T() {
 		Matrix transposed = new Matrix();
 		this.forEach(transposed::addColumn);
 		return transposed;
+	}
+
+	public Matrix sum(Matrix m) {
+		Matrix result = new Matrix();
+		IntStream.range(0, shape[0]).mapToObj(i -> this.get(i).sum(m.get(i))).forEach(result::addRow);
+		return result;
+	}
+
+	public Matrix subtract(Matrix m) {
+		Matrix result = new Matrix();
+		IntStream.range(0, shape[0]).mapToObj(i -> this.get(i).subtract(m.get(i))).forEach(result::addRow);
+		return result;
+	}
+
+	public Matrix dot(double d) {
+		Matrix result = new Matrix();
+		this.stream().map(v -> v.dot(d)).forEach(result::addRow);
+		return result;
 	}
 	
 	public Vector dot(Vector v) {
@@ -303,12 +331,17 @@ public class Matrix extends ArrayList<Vector> {
 		return LU._2().solveByRetroSubstitution(LU._1().solveBySubstitution(b));
 	}
 
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		this.forEach(row -> builder.append(row.toFixedSizeString(shape[1])).append("\n"));
+		builder.append("[\n");
+		this.forEach(row -> builder.append("\t").append(row.toFixedSizeString(shape[1])).append("\n"));
+		builder.append("]");
 		return builder.toString();
+	}
+
+	public void show() {
+		System.out.println(this);
 	}
 	
 	@Override

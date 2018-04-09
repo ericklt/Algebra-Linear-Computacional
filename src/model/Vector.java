@@ -61,8 +61,16 @@ public class Vector extends ArrayList<Double> {
 		
 		return new Vector(newVec);
 	}
+
+	public double distance() {
+		return Math.sqrt(this.zippedOperation(this, (x1, x2) -> x1*x2 ).sumAll());
+	}
+
+	public Vector normalized() {
+		return this.dot(1 / this.distance());
+	}
 	
-	public Vector elementwiseDot(Vector v) {
+	public Vector elementWiseDot(Vector v) {
 		return zippedOperation(v, (x1, x2) -> x1 * x2);
 	}
 	
@@ -71,11 +79,15 @@ public class Vector extends ArrayList<Double> {
 	}
 	
 	public double dot(Vector v) {
-		return this.elementwiseDot(v).sumAll();
+		return this.elementWiseDot(v).sumAll();
 	}
 	
 	public Vector sum(Vector v) {
 		return zippedOperation(v, (x1, x2) -> x1 + x2);
+	}
+
+	public Vector subtract(Vector v) {
+		return zippedOperation(v, (x1, x2) -> x1 - x2);
 	}
 	
 	public String toFixedSizeString(int n) {
