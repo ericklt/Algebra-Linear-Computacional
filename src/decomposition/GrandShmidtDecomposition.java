@@ -6,7 +6,7 @@ import model.Vector;
 
 public class GrandShmidtDecomposition implements QRDecomposition {
     @Override
-    public Pair<Matrix> decompose(Matrix m) {
+    public Pair<Matrix, Matrix> decompose(Matrix m) {
         Matrix ortho = new Matrix();
         for (int c = 0; c < m.shape()[1]; c++) {
             Vector col = m.getColumn(c);

@@ -63,7 +63,7 @@ public class Matrix extends ArrayList<Vector> {
 		shape[0]++;
 	}
 	
-	public void addRow(Double ...values) {
+	public void addRow(double ...values) {
 		this.addRow(new Vector(values));
 	}
 	
@@ -73,7 +73,7 @@ public class Matrix extends ArrayList<Vector> {
 		shape[1]++;
 	}
 	
-	public void addColumn(Double ...values) {
+	public void addColumn(double ...values) {
 		this.addColumn(new Vector(values));
 	}
 
@@ -304,7 +304,7 @@ public class Matrix extends ArrayList<Vector> {
 		return cho.T().solveByRetroSubstitution(cho.solveBySubstitution(b));
 	}
 
-	public Pair<Matrix> LUDecomposition() {
+	public Pair<Matrix, Matrix> LUDecomposition() {
 		if (this.shape[0] != this.shape[1]) {
 			System.err.println("It is not a square matrix!");
 			return null;
@@ -327,7 +327,7 @@ public class Matrix extends ArrayList<Vector> {
 	}
 
 	public Vector solveByLU(Vector b) {
-		Pair<Matrix> LU = this.LUDecomposition();
+		Pair<Matrix, Matrix> LU = this.LUDecomposition();
 		return LU._2().solveByRetroSubstitution(LU._1().solveBySubstitution(b));
 	}
 

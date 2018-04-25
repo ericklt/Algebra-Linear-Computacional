@@ -28,7 +28,7 @@ public class OrthogonalizationTest {
 
     @org.junit.jupiter.api.Test
     void grandSchmidtTest() {
-        Pair<Matrix> QR = new GrandShmidtDecomposition().decompose(A);
+        Pair<Matrix, Matrix> QR = new GrandShmidtDecomposition().decompose(A);
         Matrix Q = QR._1();
         Matrix R = QR._2();
 //        Q.show();
@@ -38,7 +38,7 @@ public class OrthogonalizationTest {
 
     @org.junit.jupiter.api.Test
     void houseHolderTest() {
-        Pair<Matrix> QR = new HouseHolderDecomposition().decompose(A);
+        Pair<Matrix, Matrix> QR = new HouseHolderDecomposition().decompose(A);
         Matrix Q = QR._1();
         Matrix R = QR._2();
 //        Q.show();
@@ -48,7 +48,23 @@ public class OrthogonalizationTest {
 
     @org.junit.jupiter.api.Test
     void jacobTest() {
-        Pair<Matrix> QR = new JacobDecomposition().decompose(A);
+        Pair<Matrix, Matrix> QR = new JacobDecomposition().decompose(A);
+        Matrix Q = QR._1();
+        Matrix R = QR._2();
+        Q.show();
+        R.show();
+        R.solveByRetroSubstitution(Q.T().dot(b)).show();
+    }
+
+    @org.junit.jupiter.api.Test
+    void jacobPeresTest() {
+        Matrix A = new Matrix();
+        A.addRow(1, 1, -1);
+        A.addRow(1, -2, 5);
+        A.addRow(4, 1, 4);
+        Vector b = new Vector(0, 21, 31);
+
+        Pair<Matrix, Matrix> QR = new JacobDecomposition().decompose(A);
         Matrix Q = QR._1();
         Matrix R = QR._2();
         Q.show();

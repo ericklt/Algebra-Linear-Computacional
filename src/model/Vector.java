@@ -21,8 +21,8 @@ public class Vector extends ArrayList<Double> {
 		this.addAll(vec);
 	}
 	
-	public Vector(Double ...values) {
-		this(Arrays.asList( values ));
+	public Vector(double ...values) {
+		this(Arrays.stream( values ).boxed().collect(Collectors.toList()));
 	}
 
 	public Vector copy() {

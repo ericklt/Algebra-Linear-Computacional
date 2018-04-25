@@ -32,7 +32,7 @@ public class JacobDecomposition implements QRDecomposition {
     }
 
     @Override
-    public Pair<Matrix> decompose(Matrix m) {
+    public Pair<Matrix, Matrix> decompose(Matrix m) {
         Matrix A = m.copy();
         Matrix Qt = Matrix.identity(m.shape()[0]);
         do {

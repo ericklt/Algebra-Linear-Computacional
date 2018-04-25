@@ -5,6 +5,6 @@ import model.Matrix;
 
 public interface QRDecomposition {
 
-    Pair<Matrix> decompose(Matrix m);
+    Pair<Matrix, Matrix> decompose(Matrix m);
 
 }

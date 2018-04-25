@@ -20,7 +20,7 @@ public class HouseHolderDecomposition implements QRDecomposition {
     }
 
     @Override
-    public Pair<Matrix> decompose(Matrix m) {
+    public Pair<Matrix, Matrix> decompose(Matrix m) {
         Matrix H = Matrix.identity(m.shape()[0]);
         Matrix A = m.copy();
         for (int j = 0; j < m.shape()[1]; j++) {
