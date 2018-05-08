@@ -2,14 +2,11 @@ package test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 
-import model.Generator;
-import model.Matrix;
-import model.OldSchoolMatrix;
-import model.StopWatch;
-import model.Vector;
+import Utils.StopWatch;
 
 class Test {
 	
@@ -62,7 +59,7 @@ class Test {
 
 	@org.junit.jupiter.api.Test
 	void testVectorDot() {
-		assertEquals(7., v1.dot(v2), 0.01, "Vector dot test");
+		assertEquals(new Complex(7), v1.dot(v2), "Vector dot test");
 	}
 
 

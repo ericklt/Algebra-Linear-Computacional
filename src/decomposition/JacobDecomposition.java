@@ -1,33 +1,24 @@
 package decomposition;
 
+import Utils.MyMath;
 import Utils.Pair;
+import decomposition.Decomposition;
+import model.Complex;
 import model.Matrix;
 
 import java.util.stream.IntStream;
 
-public class JacobDecomposition implements QRDecomposition {
+public class JacobDecomposition implements Decomposition {
 
     private final double eps = 0.00001;
 
-    private double errorBelowDiagonal(Matrix A) {
-        return Math.sqrt(
-                IntStream.range(0, A.shape()[1])
-                        .mapToDouble(j -> IntStream.range(j+1, A.shape()[0])
-                                .mapToDouble(i -> A.get(i, j))
-                                .map(x -> x*x)
-                                .sum())
-                        .map(x -> x*x)
-                        .sum()
-        );
-    }
-
-    private Matrix createJijT(Matrix A, int i, int j) {
-        double theta = A.get(j, j) == 0 ? Math.PI/2 : Math.atan(A.get(i, j) / A.get(j, j));
+    public static Matrix createJijT(Matrix A, int i, int j) {
+        double theta = A.get(j, j).equals(new Complex()) ? Math.PI/2 : Math.atan(A.get(i, j).div(A.get(j, j)).getReal());
         Matrix result = Matrix.identity(A.shape()[0]);
-        result.set(i, i, Math.cos(theta));
-        result.set(j, j, Math.cos(theta));
-        result.set(i, j, -Math.sin(theta));
-        result.set(j, i, Math.sin(theta));
+        result.set(i, i, new Complex(Math.cos(theta)));
+        result.set(j, j, new Complex(Math.cos(theta)));
+        result.set(i, j, new Complex(-Math.sin(theta)));
+        result.set(j, i, new Complex(Math.sin(theta)));
         return result;
     }
 
@@ -43,7 +34,7 @@ public class JacobDecomposition implements QRDecomposition {
                     Qt = JijT.dot(Qt);
                 }
             }
-        } while (errorBelowDiagonal(A) > eps);
+        } while (A.errorBelowDiagonal() > eps);
 
         return new Pair<>(Qt.subRows(0, m.shape()[1]).T(), A.subRows(0, m.shape()[1]));
     }

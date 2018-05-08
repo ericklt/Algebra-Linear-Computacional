@@ -3,7 +3,7 @@ package decomposition;
 import Utils.Pair;
 import model.Matrix;
 
-public interface QRDecomposition {
+public interface Decomposition {
 
     Pair<Matrix, Matrix> decompose(Matrix m);
 

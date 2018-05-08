@@ -1,20 +1,24 @@
 package eigen;
 
 import Utils.Pair;
+import model.Complex;
 import model.Matrix;
 import model.Vector;
 
 public class PotencyMethod extends EigenSearcher {
 
     private double eps;
+    private Vector start;
 
-    public PotencyMethod(double eps) {
+    public PotencyMethod(Vector start, double eps) {
+        this.start = start;
         this.eps = eps;
     }
 
     @Override
-    public Pair<Double, Vector> findEigen(Matrix A, Vector x) {
-        double L = 0, oldL;
+    public Pair<Complex, Vector> findEigen(Matrix A) {
+        Vector x = start;
+        Complex L = new Complex(), oldL;
         do {
             oldL = L;
             x = A.dot(x.normalized());

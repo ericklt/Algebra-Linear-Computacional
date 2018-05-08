@@ -1,4 +1,4 @@
-package model;
+package Utils;
 
 public class StopWatch {
 

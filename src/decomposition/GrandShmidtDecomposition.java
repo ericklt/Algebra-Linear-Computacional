@@ -1,10 +1,11 @@
 package decomposition;
 
 import Utils.Pair;
+import decomposition.Decomposition;
 import model.Matrix;
 import model.Vector;
 
-public class GrandShmidtDecomposition implements QRDecomposition {
+public class GrandShmidtDecomposition implements Decomposition {
     @Override
     public Pair<Matrix, Matrix> decompose(Matrix m) {
         Matrix ortho = new Matrix();

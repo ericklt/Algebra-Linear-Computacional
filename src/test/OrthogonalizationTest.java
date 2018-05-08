@@ -7,6 +7,7 @@ import decomposition.JacobDecomposition;
 import model.Matrix;
 import model.Vector;
 import org.junit.jupiter.api.BeforeAll;
+import solvers.Solver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -53,7 +54,7 @@ public class OrthogonalizationTest {
         Matrix R = QR._2();
         Q.show();
         R.show();
-        R.solveByRetroSubstitution(Q.T().dot(b)).show();
+        Solver.solveByRetroSubstitution(R, Q.T().dot(b)).show();
     }
 
     @org.junit.jupiter.api.Test
@@ -69,7 +70,7 @@ public class OrthogonalizationTest {
         Matrix R = QR._2();
         Q.show();
         R.show();
-        R.solveByRetroSubstitution(Q.T().dot(b)).show();
+        Solver.solveByRetroSubstitution(R, Q.T().dot(b)).show();
     }
 
 }

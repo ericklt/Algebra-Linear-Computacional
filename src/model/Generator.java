@@ -12,7 +12,7 @@ public class Generator {
 	}
 	
 	public Vector generateRandomVector(int n, double maxAbsValue) {
-		return new Vector(r.doubles(n).map(d -> d*maxAbsValue).boxed().collect(Collectors.toList()));
+		return new Vector(r.doubles(n).mapToObj(d -> new Complex(d*maxAbsValue)).collect(Collectors.toList()));
 	}
 	
 	public void randomize(Matrix matrix, int M, int N, double maxAbsValue) {
