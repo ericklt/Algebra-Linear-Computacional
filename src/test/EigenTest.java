@@ -73,4 +73,13 @@ public class EigenTest {
         System.out.println(TransformationMethod.findAllEigens(p));
     }
 
+    @org.junit.jupiter.api.Test
+    void complexEigensTransformationTest() {
+        Matrix p = new Matrix();
+        p.addRow(-2, -2, -9);
+        p.addRow(-1, 1, -3);
+        p.addRow(1, 1, 4);
+        System.out.println(TransformationMethod.findAllEigens(p));
+    }
+
 }

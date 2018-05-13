@@ -16,7 +16,6 @@ public class HouseHolderDecomposition implements Decomposition {
         int m = aj.shape()[0];
         Vector v = new Vector();
         IntStream.range(i, m).forEach(k -> v.set(k , aj.get(k, j)));
-        v.show(m);
         double n_v = v.norm();
         Vector N = (v.subtract( Vector.base(m, i).dot((v.get(i).getReal() < 0)? n_v : -n_v) )).normalized();
         Matrix n = new Matrix();

@@ -4,6 +4,7 @@ import solvers.GaussianEliminationSolver;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -56,6 +57,20 @@ public class Matrix extends ArrayList<Vector> {
 	public Vector getColumn(int i) {
 		return new Vector(IntStream.range(0, shape[0]).mapToObj(j -> this.get(j, i)).collect(Collectors.toList()));
 	}
+
+	public void forEachColumn(Consumer<Vector> consumer) {
+		IntStream.range(0, shape[1]).mapToObj(this::getColumn).forEach(consumer);
+	}
+
+	public Matrix subSquareMatrix(int start, int end) {
+		return subMatrix(start, end, start, end);
+	}
+
+	public Matrix subMatrix(int iStart, int iEnd, int jStart, int jEnd) {
+		Matrix result = new Matrix();
+		IntStream.range(iStart, iEnd).forEach(i -> result.addRow(this.get(i).subVector(jStart, jEnd)));
+		return result;
+	}
 	
 	public void addRow(Vector v) {
 		this.add(v);
@@ -65,6 +80,10 @@ public class Matrix extends ArrayList<Vector> {
 	
 	public void addRow(double ...values) {
 		this.addRow(new Vector(values));
+	}
+
+	public void addRow(Complex ...values) {
+		this.addRow(new Vector(Arrays.asList(values)));
 	}
 	
 	public void addColumn(Vector v) {
@@ -134,6 +153,12 @@ public class Matrix extends ArrayList<Vector> {
 		this.stream().map(v -> v.dot(d)).forEach(result::addRow);
 		return result;
 	}
+
+	public Matrix dot(Complex c) {
+		Matrix result = new Matrix();
+		this.stream().map(v -> v.dot(c)).forEach(result::addRow);
+		return result;
+	}
 	
 	public Vector dot(Vector v) {
 		return this.stream().map(row -> row.dot(v)).collect(Collectors.toCollection(Vector::new));
@@ -177,20 +202,19 @@ public class Matrix extends ArrayList<Vector> {
 		return result.mul(finalMultiplier);
 	}
 
+	public Complex trace() {
+		return this.getDiagonalAsVector().sumAll();
+	}
+
 	public Vector getDiagonalAsVector() {
 		return new Vector(IntStream.range(0, shape[0]).mapToObj(i -> this.get(i, i)).collect(Collectors.toList()));
 	}
 
 	public double errorBelowDiagonal() {
-		return Math.sqrt(
-				IntStream.range(0, shape[1])
-						.mapToObj(j -> IntStream.range(j+1, shape[0])
-								.mapToObj(i -> this.get(i, j))
-								.mapToDouble(Complex::mulByConjugate)
-								.sum())
-						.mapToDouble(x -> x*x)
-						.sum()
-		);
+		return IntStream.range(1, shape[0])
+				.mapToObj(i -> get(i).subVector(0, i).maxAbs())
+				.mapToDouble(Complex::size)
+				.max().getAsDouble();
 	}
 
 	@Override

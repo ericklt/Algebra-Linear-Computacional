@@ -34,12 +34,20 @@ public class Vector extends ArrayList<Complex> {
 		if (index >= this.size()) return new Complex(0);
 		return super.get(index);
 	}
-	
+
+	public Vector subVector(int iStart, int iEnd) {
+		return IntStream.range(iStart, iEnd).mapToObj(this::get).collect(Collectors.toCollection(Vector::new));
+	}
+
+	public Complex maxAbs() {
+		return this.stream().max(Complex::compareTo).get();
+	}
+
 	public Complex set(int index, Complex element) {
 		while (index >= this.size()) this.add(new Complex());
 		return super.set(index, element);
 	}
-	
+
 	public Complex sumAll() {
 		return this.stream().reduce(new Complex(), Complex::sum);
 	}

@@ -2,6 +2,8 @@ package test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import Utils.Pair;
+import Utils.Triple;
+import decomposition.SVD;
 import model.PivotingMode;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -42,6 +44,27 @@ class DecompositionTest {
     @org.junit.jupiter.api.Test
     void LUTest() {
         assertEquals(gaussianSolver.solve(A, b), luSolver.solve(A, b), "Solving by LU");
+    }
+
+    @org.junit.jupiter.api.Test
+    void SVDTest() {
+        Triple<Matrix, Matrix, Matrix> svd = SVD.decompose(A);
+        System.out.println(svd);
+        assertEquals(A, svd._1().dot(svd._2().dot(svd._3())), "SVD Equals");
+
+        Matrix A = new Matrix();
+        A.addRow(1, 2);
+        A.addRow(-3, 4);
+        A.addRow(0, 2);
+        A.addRow(5, 6);
+
+        svd = SVD.decompose(A);
+        System.out.println(svd);
+        assertEquals(A, svd._1().dot(svd._2().dot(svd._3())), "SVD Equals2");
+
+        svd = SVD.decompose(A.T());
+        System.out.println(svd);
+        assertEquals(A.T(), svd._1().dot(svd._2().dot(svd._3())), "SVD Equals2");
     }
 
 }

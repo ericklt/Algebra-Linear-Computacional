@@ -4,7 +4,7 @@ import Utils.Pair;
 
 import java.text.DecimalFormat;
 
-public class Complex extends Pair<Double, Double> {
+public class Complex extends Pair<Double, Double> implements Comparable {
 
     public Complex() {
         this(0);
@@ -16,6 +16,10 @@ public class Complex extends Pair<Double, Double> {
 
     public Complex(double real, double im) {
         super(real, im);
+    }
+
+    public Complex copy() {
+        return new Complex(getReal(), getIm());
     }
 
     public double getReal() {
@@ -95,5 +99,11 @@ public class Complex extends Pair<Double, Double> {
     public boolean equals(Object o) {
         if (!(o instanceof Complex)) return false;
         return this.distanceTo((Complex) o) < 0.0001;
+    }
+
+
+    @Override
+    public int compareTo(Object o) {
+        return Double.compare(this.size(), ((Complex)o).size());
     }
 }
