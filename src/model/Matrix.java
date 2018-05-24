@@ -14,6 +14,22 @@ public class Matrix extends ArrayList<Vector> {
 	private static final long serialVersionUID = 1L;
 
 	protected int[] shape = new int[] {0, 0};
+
+	public static Matrix parse(String s) {
+		return parse(s, ",");
+	}
+
+	public static Matrix parse(String s, String separator) {
+		s = s.trim().replace("{", "[")
+				.replace("}", "]");
+		if (!s.startsWith("[") || !s.endsWith("]")) {
+			System.err.println("Invalid format");
+			return null;
+		}
+		s = s.substring(1, s.length()-1).trim();
+		String[] lines = s.split("]\\s*" + separator);
+		return new Matrix(Arrays.stream(lines).map(Vector::parse).collect(Collectors.toList()));
+	}
 	
 	public Matrix(List<Vector> matrix) {
 		matrix.forEach(this::addRow);
@@ -138,7 +154,7 @@ public class Matrix extends ArrayList<Vector> {
 
 	public Matrix sum(Matrix m) {
 		Matrix result = new Matrix();
-		IntStream.range(0, shape[0]).mapToObj(i -> this.get(i).sum(m.get(i))).forEach(result::addRow);
+		IntStream.range(0, Math.max(shape[0], m.shape()[0])).mapToObj(i -> this.get(i).sum(m.get(i))).forEach(result::addRow);
 		return result;
 	}
 

@@ -7,6 +7,8 @@ import model.Matrix;
 import model.PivotingMode;
 import model.Vector;
 import org.junit.jupiter.api.BeforeAll;
+import solvers.GaussianEliminationSolver;
+import solvers.LUSolver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -66,19 +68,13 @@ public class EigenTest {
 
     @org.junit.jupiter.api.Test
     void peresTestWithTransformation() {
-        Matrix p = new Matrix();
-        p.addRow(1, 2, 3);
-        p.addRow(4, 5, 6);
-        p.addRow(7, 8, 10);
+        Matrix p = Matrix.parse("[[1, 2, 3], [4, 5, 6], [7, 8, 10]]");
         System.out.println(TransformationMethod.findAllEigens(p));
     }
 
     @org.junit.jupiter.api.Test
     void complexEigensTransformationTest() {
-        Matrix p = new Matrix();
-        p.addRow(-2, -2, -9);
-        p.addRow(-1, 1, -3);
-        p.addRow(1, 1, 4);
+        Matrix p = Matrix.parse("[[-2, -2, -9], [-1, 1, -3], [1, 1, 4]]");
         System.out.println(TransformationMethod.findAllEigens(p));
     }
 

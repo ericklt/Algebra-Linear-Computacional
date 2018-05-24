@@ -93,4 +93,29 @@ class Test {
 		System.out.println("(OldSchool) Time linear combination dot: " + w2.getTime());
 	}
 
+//	@org.junit.jupiter.api.Test
+//	void testDot() {
+//		Matrix m1 = new Matrix();
+//		m1.addRow(1, 0, 0, 0);
+//		m1.addRow(0, 1, 0, 0);
+//		m1.addRow(0, 0, -0.6, -0.8);
+//		m1.addRow(0, 0, -0.8, 0.6);
+//
+//		Matrix m2 = new Matrix();
+//		m2.addRow(4, -3, 0, 0);
+//		m2.addRow(-3, 3.33333, -1.666666, 0);
+//		m2.addRow(0, 1, 0.066666, -2.133333);
+//		m2.addRow(0, 1.333333, 1.6, 0.4666666666);
+//
+//		m1.dot(m2).show();
+//	}
+
+	@org.junit.jupiter.api.Test
+	void testMatrixParse() {
+		Matrix m = Matrix.parse("[[1, 2, 3], [2, 3, 4], [5, 6, 1]]");
+		m.show();
+		m = Matrix.parse("[[1], [2], [3], [-2]]");
+		m.show();
+	}
+
 }

@@ -18,12 +18,7 @@ public class OrthogonalizationTest {
 
     @BeforeAll
     static void setUpBeforeClass() {
-        A = new Matrix();
-        A.addRow(-1., -1., 1.);
-        A.addRow(1., 3., 3.);
-        A.addRow(-1., -1., 5.);
-        A.addRow(1., 3., 7.);
-
+        A = Matrix.parse("[[-1, -1, 1], [1, 3, 3], [-1, -1, 5], [1, 3, 7]]");
         b = new Vector(4., 2., 1., -3.);
     }
 
@@ -59,10 +54,7 @@ public class OrthogonalizationTest {
 
     @org.junit.jupiter.api.Test
     void jacobPeresTest() {
-        Matrix A = new Matrix();
-        A.addRow(1, 1, -1);
-        A.addRow(1, -2, 5);
-        A.addRow(4, 1, 4);
+        Matrix A = Matrix.parse("[[1, 1, -1], [1, -2, 5], [4, 1, 4]]");
         Vector b = new Vector(0, 21, 31);
 
         Pair<Matrix, Matrix> QR = new JacobDecomposition().decompose(A);

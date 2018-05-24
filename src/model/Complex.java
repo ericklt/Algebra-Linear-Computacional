@@ -82,7 +82,7 @@ public class Complex extends Pair<Double, Double> implements Comparable {
 
     @Override
     public String toString() {
-        DecimalFormat format = new DecimalFormat("0.00");
+        DecimalFormat format = new DecimalFormat("0.000");
         String realS = format.format(getReal());
         String imS = format.format(getIm()) + "i";
         if (Math.abs(getIm()) < 0.00001)

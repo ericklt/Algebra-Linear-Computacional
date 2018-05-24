@@ -13,6 +13,19 @@ public class Vector extends ArrayList<Complex> {
 	
 	private static final long serialVersionUID = 1L;
 
+	public static Vector parse(String s) {
+		return parse(s, ",");
+	}
+
+	public static Vector parse(String s, String separator) {
+		s = s.replace("[", "")
+				.replace("]", "")
+				.trim();
+		return new Vector(Arrays.stream(s.split(separator))
+				.mapToDouble(Double::valueOf)
+				.toArray());
+	}
+
 	public Vector(int size) {
 		this.set(size-1, new Complex());
 	}
@@ -33,6 +46,10 @@ public class Vector extends ArrayList<Complex> {
 	public Complex get(int index) {
 		if (index >= this.size()) return new Complex(0);
 		return super.get(index);
+	}
+
+	public Vector conjugate() {
+		return this.stream().map(Complex::conjugate).collect(Collectors.toCollection(Vector::new));
 	}
 
 	public Vector subVector(int iStart, int iEnd) {
@@ -80,6 +97,10 @@ public class Vector extends ArrayList<Complex> {
 
 	public Vector normalized() {
 		return this.dot(1 / this.norm());
+	}
+
+	public Vector lastElementTo1() {
+		return this.dot(new Complex(1).div(this.get(this.size()-1)));
 	}
 	
 	public Vector elementWiseDot(Vector v) {
