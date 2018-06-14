@@ -1,8 +1,8 @@
 package model;
-import Utils.MyMath;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
@@ -29,7 +29,11 @@ public class Vector extends ArrayList<Complex> {
 	public Vector(int size) {
 		this.set(size-1, new Complex());
 	}
-	
+
+	public Vector(Complex c) {
+		this(Collections.singletonList(c));
+	}
+
 	public Vector(List<Complex> vec) {
 		this.clear();
 		this.addAll(vec);
@@ -87,8 +91,12 @@ public class Vector extends ArrayList<Complex> {
 		return new Vector(newVec);
 	}
 
+	public double sumSquared() {
+		return this.stream().mapToDouble(Complex::mulByConjugate).sum();
+	}
+
 	public double norm() {
-		return Math.sqrt(this.stream().mapToDouble(Complex::mulByConjugate).sum());
+		return Math.sqrt(this.sumSquared());
 	}
 
 	public double distanceTo(Vector v) {
@@ -97,6 +105,10 @@ public class Vector extends ArrayList<Complex> {
 
 	public Vector normalized() {
 		return this.dot(1 / this.norm());
+	}
+
+	public Vector squared() {
+		return this.stream().map(c -> c.mul(c)).collect(Collectors.toCollection(Vector::new));
 	}
 
 	public Vector lastElementTo1() {

@@ -8,7 +8,7 @@ import model.Matrix;
 
 import java.util.stream.IntStream;
 
-public class JacobDecomposition implements Decomposition {
+public class JacobiDecomposition implements Decomposition {
 
     private final double eps = 0.00001;
 

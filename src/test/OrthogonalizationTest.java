@@ -3,7 +3,7 @@ package test;
 import Utils.Pair;
 import decomposition.GrandShmidtDecomposition;
 import decomposition.HouseHolderDecomposition;
-import decomposition.JacobDecomposition;
+import decomposition.JacobiDecomposition;
 import model.Matrix;
 import model.Vector;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,9 +27,9 @@ public class OrthogonalizationTest {
         Pair<Matrix, Matrix> QR = new GrandShmidtDecomposition().decompose(A);
         Matrix Q = QR._1();
         Matrix R = QR._2();
-//        Q.show();
-//        R.show();
-//        R.solveByRetroSubstitution(Q.T().dot(b)).show();
+        Q.show();
+        R.show();
+        Solver.solveByRetroSubstitution(R, Q.T().dot(b)).show();
     }
 
     @org.junit.jupiter.api.Test
@@ -37,14 +37,14 @@ public class OrthogonalizationTest {
         Pair<Matrix, Matrix> QR = new HouseHolderDecomposition().decompose(A);
         Matrix Q = QR._1();
         Matrix R = QR._2();
-//        Q.show();
-//        R.show();
+        Q.show();
+        R.show();
 //        R.solveByRetroSubstitution(Q.T().dot(b)).show();
     }
 
     @org.junit.jupiter.api.Test
     void jacobTest() {
-        Pair<Matrix, Matrix> QR = new JacobDecomposition().decompose(A);
+        Pair<Matrix, Matrix> QR = new JacobiDecomposition().decompose(A);
         Matrix Q = QR._1();
         Matrix R = QR._2();
         Q.show();
@@ -57,7 +57,7 @@ public class OrthogonalizationTest {
         Matrix A = Matrix.parse("[[1, 1, -1], [1, -2, 5], [4, 1, 4]]");
         Vector b = new Vector(0, 21, 31);
 
-        Pair<Matrix, Matrix> QR = new JacobDecomposition().decompose(A);
+        Pair<Matrix, Matrix> QR = new JacobiDecomposition().decompose(A);
         Matrix Q = QR._1();
         Matrix R = QR._2();
         Q.show();

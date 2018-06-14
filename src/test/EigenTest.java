@@ -33,6 +33,7 @@ public class EigenTest {
         EigenSearcher searcher = new PotencyMethod(start, eps);
         Pair<Complex, Vector> eigens = searcher.findEigen(A);
         assertEquals(new Complex(6), eigens._1(), "Potency");
+        eigens._2().show();
     }
 
     @org.junit.jupiter.api.Test
@@ -40,6 +41,7 @@ public class EigenTest {
         EigenSearcher searcher = new InversePotencyMethod(start, eps);
         Pair<Complex, Vector> eigens = searcher.findEigen(A);
         assertEquals(new Complex(3), eigens._1(), "Inverse");
+        eigens._2().show();
     }
 
     @org.junit.jupiter.api.Test
@@ -47,6 +49,7 @@ public class EigenTest {
         EigenSearcher searcher = new DislocatedPotencyMethod(start, eps, -4.5);
         Pair<Complex, Vector> eigens = searcher.findEigen(A);
         assertEquals(new Complex(-5), eigens._1(), "Dislocated");
+        eigens._2().show();
     }
 
     @org.junit.jupiter.api.Test
@@ -64,6 +67,18 @@ public class EigenTest {
         System.out.println(eigens1);
         System.out.println(eigens2);
         System.out.println(eigens3);
+    }
+
+    @org.junit.jupiter.api.Test
+    void transformationTest() {
+        Matrix big = Matrix.parse("[[5, -3, 2, -5, 1], [8, 10, 4, 3, 2], [-4, -5, 1, 0, 10], [2, -2, 0, -6, -1], [1, 2, 3, 4, 5]]");
+        System.out.println(TransformationMethod.findAllEigens(big));
+    }
+
+    @org.junit.jupiter.api.Test
+    void transformationTestPeres() {
+        Matrix big = Matrix.parse("[[1, 1, 3 ,2, 5], [6, 7, 8, 9, 10], [2, 3, 3, 4, 5], [1, 3, 1, 1, 1], [2, 1, 1, 3, 5]]");
+        System.out.println(TransformationMethod.findAllEigens(big));
     }
 
     @org.junit.jupiter.api.Test

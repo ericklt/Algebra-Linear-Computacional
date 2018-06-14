@@ -3,19 +3,24 @@ package eigen;
 import Utils.Pair;
 import decomposition.Decomposition;
 import decomposition.HouseHolderDecomposition;
-import decomposition.JacobDecomposition;
+import decomposition.JacobiDecomposition;
 import model.Complex;
 import model.Matrix;
 import model.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class TransformationMethod {
+
+    private static List<Pair<Complex, Vector>> getAllEigenSimple(Matrix A, Matrix X) {
+        return IntStream.range(0, A.shape()[0])
+                .mapToObj(i -> new Pair<>(A.get(i, i), X.dot(getEigenVector(A, i))))
+                .collect(Collectors.toList());
+    }
 
     private static Vector getEigenVector(Matrix A, int i) {
         Vector v = new Vector();
@@ -27,7 +32,7 @@ public class TransformationMethod {
 
     private static Matrix inverseOf2by2(Matrix A) {
         if (A.shape()[0] == 1 && A.shape()[1] == 1)
-            return new Matrix(new Vector(Collections.singletonList(new Complex(1).div(A.get(0, 0)))));
+            return new Matrix(new Vector(new Complex(1).div(A.get(0, 0))));
         if (A.shape()[0] != 2 || A.shape()[1] != 2) {
             System.err.println("Matrix is not 2x2");
             return null;
@@ -67,7 +72,7 @@ public class TransformationMethod {
             return null;
         }
         Matrix m = new Matrix();
-        m.addRow(new Vector(Collections.singletonList(A.get(0,1).div(eigenValue.sub(A.get(0, 0))))));
+        m.addRow(new Vector(A.get(0,1).div(eigenValue.sub(A.get(0, 0)))));
         m.addRow(Vector.parse("1"));
         return m;
     }
@@ -79,15 +84,17 @@ public class TransformationMethod {
             Complex eigenValue = eigenValueOf2x2(blockMatrix.get(I, I));
             BlockMatrix blockVector = new BlockMatrix();
             for (int J = I-1; J >= 0; J--) {
-                Matrix inverse = inverseOf2by2(blockMatrix.get(J, J).subtract(Matrix.identity(2).dot(eigenValue)));
+                int blockSize = (blockMatrix.getBlockSequence().get(J)) ? 2 : 1;
+                Matrix inverse = inverseOf2by2(blockMatrix.get(J, J).subtract(Matrix.identity(blockSize).dot(eigenValue)));
                 Matrix result = new Matrix();
-                for (int K = J+1; K < I; K++)
+                for (int K = J+1; K < I-1; K++)
                     result.sum(blockMatrix.get(J, K).dot(blockVector.get(K, 0)));
                 result = inverse.dot(result.sum(blockMatrix.get(J, I)).dot(-1));
-                blockVector.addLine(Collections.singletonList(result));
+                blockVector.addLine(result);
+                blockVector.getBlockSequence().add(blockSize == 2);
             }
             Boolean is2x2Block = blockMatrix.getBlockSequence().get(I);
-            blockVector.addLine(Collections.singletonList(eigenVectorOf2x2(blockMatrix.get(I, I), eigenValue)));
+            blockVector.addLine(eigenVectorOf2x2(blockMatrix.get(I, I), eigenValue));
             Vector eigenVector = blockVector2Vector(blockVector);
             vectorList.add(new Pair<>(eigenValue, X.dot(eigenVector)));
             if (is2x2Block)
@@ -109,7 +116,7 @@ public class TransformationMethod {
         }
 
         Matrix X = H;
-        Decomposition decomposition = new JacobDecomposition();
+        Decomposition decomposition = new JacobiDecomposition();
 
         int it = 0;
         while (it < 10000 && A.errorBelowDiagonal() > eps) {
@@ -118,11 +125,9 @@ public class TransformationMethod {
             A = QR._2().dot(QR._1());
             X = X.dot(QR._1());
         }
-        Matrix Af = A;
-        Matrix Xf = X;
 
         return A.errorBelowDiagonal() < eps ?
-                IntStream.range(0, n).mapToObj(i -> new Pair<>(Af.get(i, i), Xf.dot(getEigenVector(Af, i)).lastElementTo1())).collect(Collectors.toList()) :
-                getAllEigenWithBlock(A, Xf).stream().map(p -> new Pair<>(p._1(), p._2().lastElementTo1())).collect(Collectors.toList());
+                getAllEigenSimple(A, X) :
+                getAllEigenWithBlock(A, X);
     }
 }

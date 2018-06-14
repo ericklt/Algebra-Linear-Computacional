@@ -62,6 +62,19 @@ class Test {
 		assertEquals(new Complex(7), v1.dot(v2), "Vector dot test");
 	}
 
+	@org.junit.jupiter.api.Test
+	void testMatrixVectorDot() {
+		Matrix m = Matrix.parse("[[3, 4], [1, 6]]");
+		Vector v = Vector.parse("[7, 2]");
+		assertEquals(new Vector(29, 19), m.dot(v), "Matrix-Vector dot test");
+	}
+
+	@org.junit.jupiter.api.Test
+	void testMatrixMatrixDot() {
+		Matrix m1 = Matrix.parse("[[3, 4], [1, 6]]");
+		Matrix m2 = Matrix.parse("[[7, 2], [-2, 5]]");
+		assertEquals(Matrix.parse("[[13, 26], [-5, 32]]"), m1.dot(m2), "Matrix-Matrix dot test");
+	}
 
 	@org.junit.jupiter.api.Test
 	void testTimes() {

@@ -222,6 +222,12 @@ public class Matrix extends ArrayList<Vector> {
 		return this.getDiagonalAsVector().sumAll();
 	}
 
+	public Matrix getDiagonalMatrix() {
+		Matrix result = new Matrix();
+		IntStream.range(0, shape[0]).forEach(i -> result.set(i, i, this.get(i, i)));
+		return result;
+	}
+
 	public Vector getDiagonalAsVector() {
 		return new Vector(IntStream.range(0, shape[0]).mapToObj(i -> this.get(i, i)).collect(Collectors.toList()));
 	}

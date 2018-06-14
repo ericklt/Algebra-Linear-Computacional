@@ -8,9 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 
 import model.Matrix;
 import model.Vector;
-import solvers.GaussianEliminationSolver;
-import solvers.LeastSquaresSolver;
-import solvers.Solver;
+import solvers.*;
 
 class LinearFunctionTest {
 
@@ -47,6 +45,47 @@ class LinearFunctionTest {
     @org.junit.jupiter.api.Test
     void testLeastSquares() {
         assertEquals(new Vector(1., 0., 0., 4.), leastSquaresSolver.solve(A, b), "Least squares");
+    }
+
+    @org.junit.jupiter.api.Test
+    void testJacobiSolver() {
+        IterativeSolver solver = new JacobiSolver();
+        assertEquals(new Vector(1., 0., 0., 4.), solver.solve(A, b), "Jacobi");
+        System.out.println(solver.getLastIterations());
+    }
+
+    @org.junit.jupiter.api.Test
+    void testGaussSeidelSolver() {
+        IterativeSolver solver = new GaussSeidelSolver();
+        assertEquals(new Vector(1., 0., 0., 4.), solver.solve(A, b), "Gauss-Seidel");
+        System.out.println(solver.getLastIterations());
+    }
+
+    @org.junit.jupiter.api.Test
+    void testSORSolver() {
+        IterativeSolver solver = new SORSolver(1.3);
+        assertEquals(new Vector(1., 0., 0., 4.), solver.solve(A, b), "SOR");
+        System.out.println(solver.getLastIterations());
+    }
+
+    @org.junit.jupiter.api.Test
+    void testSteepestDescentSolver() {
+//        Matrix A = Matrix.parse("[[4, 1], [1, 3]]");
+//        Vector b = new Vector(1, 2);
+        IterativeSolver solver = new SteepestDescentSolver();
+        solver.solve(A, b).show();
+//        assertEquals(new Vector(1 / 11., 7 / 11.), solver.solve(A, b), "Simple Conjugate Gradients");
+        System.out.println(solver.getLastIterations());
+    }
+
+    @org.junit.jupiter.api.Test
+    void testSimpleConjugateGradientSolver() {
+//        Matrix A = Matrix.parse("[[4, 1], [1, 3]]");
+//        Vector b = new Vector(1, 2);
+        IterativeSolver solver = new ConjugateGradientSolver();
+        solver.solve(A, b).show();
+//        assertEquals(new Vector(1 / 11., 7 / 11.), solver.solve(A, b), "Simple Conjugate Gradients");
+        System.out.println(solver.getLastIterations());
     }
 
 }

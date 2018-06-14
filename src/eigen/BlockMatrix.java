@@ -3,10 +3,7 @@ package eigen;
 import model.Matrix;
 import model.Vector;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class BlockMatrix {
 
@@ -66,7 +63,7 @@ public class BlockMatrix {
             Matrix toAdd = b ?
                     Matrix.parse(String.format(Locale.ENGLISH, "[[%f], [%f]]", v.get(i).getReal(), v.get(i+1).getReal())):
                     Matrix.parse(String.format(Locale.ENGLISH, "[[%f]]", v.get(i).getReal()));
-            matrix.addLine(Collections.singletonList(toAdd));
+            matrix.addLine(toAdd);
             if (b) i++;
             i++;
         }
@@ -89,6 +86,10 @@ public class BlockMatrix {
         return blockMatrix.get(i);
     }
 
+    public void addLine(Matrix ...ms) {
+        this.addLine(Arrays.asList(ms));
+    }
+
     public void addLine(List<Matrix> line) {
         blockMatrix.add(line);
         shape[0]++;
@@ -105,12 +106,26 @@ public class BlockMatrix {
 
     @Override
     public String toString() {
-        return blockMatrix.stream()
-                .map(line -> line.stream()
-                        .map(Matrix::toString)
-                        .reduce((x, y) -> x+"\t"+y)
-                        .get())
-                .reduce((x, y) -> x+"\n"+y)
-                .get();
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < shape[0]; i++) {
+            for (int k1 = 0; k1 < (blockSequence.get(i) ? 2 : 1); k1++) {
+                for (int j = 0; j < shape[1]; j++) {
+                    for (int k2 = 0; k2 < (blockSequence.get(j) ? 2 : 1); k2++) {
+                        b.append("\t").append(get(i, j).get(k1, k2));
+                    }
+                    b.append("\t\t");
+                }
+                b.append("\n");
+            }
+            b.append("\n");
+        }
+        return b.toString();
+//        return blockMatrix.stream()
+//                .map(line -> line.stream()
+//                        .map(Matrix::toString)
+//                        .reduce((x, y) -> x+"\t"+y)
+//                        .get())
+//                .reduce((x, y) -> x+"\n"+y)
+//                .get();
     }
 }
